@@ -19,7 +19,7 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "dev", "web", "sys", "sys", "doc", "chat", "media", "mail", "telegram" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -56,25 +56,29 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+//static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *roficmd[] = { "rofi", "-show", "combi" };
+#define dmenucmd roficmd	// fix dmenucmd to roficmd
+static const char *rofi_passcmd[] = { "rofi-pass", NULL };
 static const char *termcmd[]  = { "termite", NULL };
 
 #include "movestack.c"
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_d,      spawn,          {.v = roficmd } },
+	{ MODKEY,                       XK_p,      spawn,           {.v = rofi_passcmd } },
+	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY|ShiftMask,             XK_j,      movestack,      {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_k,      movestack,      {.i = -1 } },
-	{ MODKEY,                       XK_Return, zoom,           {0} },
+	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
@@ -117,3 +121,69 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
+static char *dwmfifo = "/tmp/dwm.fifo";
+static Command commands[] = {
+	{ "rofi",            spawn,          {.v = roficmd} },
+	{ "term",            spawn,          {.v = termcmd} },
+	{ "termite",         spawn,          {.v = termcmd} },
+	{ "pass",            spawn,          {.v = rofi_passcmd} },
+	{ "rofi-pass",       spawn,          {.v = rofi_passcmd} },
+	{ "quit",            quit,           {0} },
+	{ "togglebar",       togglebar,      {0} },
+	{ "focusstack+",     focusstack,     {.i = +1} },
+	{ "focusstack-",     focusstack,     {.i = -1} },
+	{ "incnmaster+",     incnmaster,     {.i = +1} },
+	{ "incnmaster-",     incnmaster,     {.i = -1} },
+	{ "setmfact+",       setmfact,       {.f = +0.05} },
+	{ "setmfact-",       setmfact,       {.f = -0.05} },
+	{ "zoom",            zoom,           {0} },
+	{ "view",            view,           {0} },
+	{ "killclient",      killclient,     {0} },
+	{ "setlayout-tiled", setlayout,      {.v = &layouts[0]} },
+	{ "setlayout-float", setlayout,      {.v = &layouts[1]} },
+	{ "setlayout-mono",  setlayout,      {.v = &layouts[2]} },
+	{ "togglelayout",    setlayout,      {0} },
+	{ "togglefloating",  togglefloating, {0} },
+	{ "viewall",         view,           {.ui = ~0} },
+	{ "tag",             tag,            {.ui = ~0} },
+	{ "focusmon+",       focusmon,       {.i = +1} },
+	{ "focusmon-",       focusmon,       {.i = -1} },
+	{ "tagmon+",         tagmon,         {.i = +1} },
+	{ "tagmon-",         tagmon,         {.i = -1} },
+	{ "view1",           view,           {.ui = 1 << 0} },
+	{ "view2",           view,           {.ui = 1 << 1} },
+	{ "view3",           view,           {.ui = 1 << 2} },
+	{ "view4",           view,           {.ui = 1 << 3} },
+	{ "view5",           view,           {.ui = 1 << 4} },
+	{ "view6",           view,           {.ui = 1 << 5} },
+	{ "view7",           view,           {.ui = 1 << 6} },
+	{ "view8",           view,           {.ui = 1 << 7} },
+	{ "view9",           view,           {.ui = 1 << 8} },
+	{ "toggleview1",     toggleview,     {.ui = 1 << 0} },
+	{ "toggleview2",     toggleview,     {.ui = 1 << 1} },
+	{ "toggleview3",     toggleview,     {.ui = 1 << 2} },
+	{ "toggleview4",     toggleview,     {.ui = 1 << 3} },
+	{ "toggleview5",     toggleview,     {.ui = 1 << 4} },
+	{ "toggleview6",     toggleview,     {.ui = 1 << 5} },
+	{ "toggleview7",     toggleview,     {.ui = 1 << 6} },
+	{ "toggleview8",     toggleview,     {.ui = 1 << 7} },
+	{ "toggleview9",     toggleview,     {.ui = 1 << 8} },
+	{ "tag1",            tag,            {.ui = 1 << 0} },
+	{ "tag2",            tag,            {.ui = 1 << 1} },
+	{ "tag3",            tag,            {.ui = 1 << 2} },
+	{ "tag4",            tag,            {.ui = 1 << 3} },
+	{ "tag5",            tag,            {.ui = 1 << 4} },
+	{ "tag6",            tag,            {.ui = 1 << 5} },
+	{ "tag7",            tag,            {.ui = 1 << 6} },
+	{ "tag8",            tag,            {.ui = 1 << 7} },
+	{ "tag9",            tag,            {.ui = 1 << 8} },
+	{ "toggletag1",      toggletag,      {.ui = 1 << 0} },
+	{ "toggletag2",      toggletag,      {.ui = 1 << 1} },
+	{ "toggletag3",      toggletag,      {.ui = 1 << 2} },
+	{ "toggletag4",      toggletag,      {.ui = 1 << 3} },
+	{ "toggletag5",      toggletag,      {.ui = 1 << 4} },
+	{ "toggletag6",      toggletag,      {.ui = 1 << 5} },
+	{ "toggletag7",      toggletag,      {.ui = 1 << 6} },
+	{ "toggletag8",      toggletag,      {.ui = 1 << 7} },
+	{ "toggletag9",      toggletag,      {.ui = 1 << 8} },
+};
