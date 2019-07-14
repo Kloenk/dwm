@@ -6,3 +6,4 @@ fakefullscreen
 dwmfifo
 fibonacci
 cyclelayouts
+three-column (tcl)

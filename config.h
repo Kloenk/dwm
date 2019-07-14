@@ -37,6 +37,7 @@ static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 
 #include "fibonacci.c"
+#include "tcl.c"
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -45,6 +46,7 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle },
 	{ "[@]",      spiral },
 	{ "[\\]",     dwindle },
+	{ "|||",      tcl },
 	{ NULL,       NULL },
 };
 
