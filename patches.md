@@ -10,3 +10,5 @@ fibonacci
 cyclelayouts
 three-column (tcl)
 killunsel
+selfrestart
+alternativetags

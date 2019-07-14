@@ -19,16 +19,22 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "dev", "web", "sys", "sys", "doc", "chat", "media", "mail", "telegram" };
+static const char *tags[] = { "👨‍💻", "🌐", "🖥️", "📟", "📜", "👋", "📺", "✉️", "💬" };
+static const char *tagsalt[] = { "dev", "web", "sys", "sys", "doc", "chat", "media", "mail", "telegram" };
 
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class               instance    title       tags mask     isfloating   monitor */
+	{ "Gimp",              NULL,       NULL,       0,            1,           -1 },
+	{ "VSCodium",          NULL,       NULL,       1 << 0,       0,           -1 },
+	{ "Firefox",           NULL,       NULL,       1 << 1,       0,           -1 },
+	{ "Chromium-browser",  NULL,       NULL,       1 << 1,       0,           -1 },
+	{ "Daily",             NULL,       NULL,       1 << 7,       0,           -1 },
+	{ "TelegramDesktop",   NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "mpv",               NULL,       NULL,       1 << 6,       0,           -1 },
 };
 
 /* layout(s) */
@@ -51,7 +57,7 @@ static const Layout layouts[] = {
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -67,15 +73,18 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *roficmd[] = { "rofi", "-show", "combi" };
 #define dmenucmd roficmd	// fix dmenucmd to roficmd
 static const char *rofi_passcmd[] = { "rofi-pass", NULL };
+static const char *compton_restartcmd[] = { "systemctl", "--user", "restart", "compton.service" };
 static const char *termcmd[]  = { "termite", NULL };
 
 #include "movestack.c"
+#include "selfrestart.c"
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_d,      spawn,          {.v = roficmd } },
 	{ MODKEY,                       XK_p,      spawn,           {.v = rofi_passcmd } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY|ShiftMask,             XK_c,      spawn,          {.v = compton_restartcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -88,15 +97,16 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_q,      killclient,     {0} },
-	{ MODKEY|ControlMask,            XK_q,      killunsel,     {0} },
+	{ MODKEY|ControlMask,           XK_q,      killunsel,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_s,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY|ControlMask,		    XK_comma,  cyclelayout,    {.i = -1 } },
 	{ MODKEY|ControlMask,           XK_period, cyclelayout,    {.i = +1 } },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
+	{ MODKEY,                       XK_space,  cyclelayout,      {.i = +1} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ MODKEY,                       XK_n,      togglealttag,   {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
@@ -112,6 +122,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
+	{ MODKEY|ShiftMask,             XK_r,      self_restart,   {0} },
 	{ MODKEY|ShiftMask,             XK_e,      quit,           {0} },
 };
 
@@ -119,7 +130,7 @@ static Key keys[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
-	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
+	{ ClkLtSymbol,          0,              Button1,        cyclelayout,    {.i = +1} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
