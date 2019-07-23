@@ -1,3 +1,3 @@
 [submodule "libdwm"]
-	path = libdwm
+	path = rwm
 	url = https://github.com/Kloenk/libdwm.a.git

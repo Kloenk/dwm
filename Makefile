@@ -17,26 +17,28 @@ options:
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-${OBJ}: config.h config.mk libdwm/out/libdwm.h
+${OBJ}: config.h config.mk inc/rwm.h
 
 #config.h: config.def.h
 #	cp config.def.h $@
 
-lib/libdwm.so: libdwm/src/*.rs
-	$(MAKE) -C libdwm out//libdwm.so
+lib/librwm.so: rwm/src/*.rs
+	$(MAKE) -C rwm out/librwm.so
 	mkdir -p lib/
-	cp libdwm/out/libdwm.so lib/libdwm.so
+	cp rwm/out/librwm.so lib/librwm.so
 
-libdwm/out/libdwm.h:
-	$(MAKE) -C libdwm out//libdwm.h
+inc/rwm.h:
+	$(MAKE) -C rwm out/rwm.h
+	mkdir -p inc/
+	cp rwm/out/rwm.h inc/rwm.h
 
-dwm: ${OBJ} lib/libdwm.so
+dwm: ${OBJ} lib/librwm.so
 	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
 clean:
 	-rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
-	-rm -rf lib/
-	$(MAKE) -C libdwm clean
+	-rm -rf lib/ inc/
+	$(MAKE) -C rwm clean
 
 dist: clean
 	mkdir -p dwm-${VERSION}
@@ -50,6 +52,8 @@ install: all
 	mkdir -p ${DESTDIR}${PREFIX}/bin
 	cp -f dwm ${DESTDIR}${PREFIX}/bin
 	chmod 755 ${DESTDIR}${PREFIX}/bin/dwm
+	install -Dm0755 lib/librwm.so ${DESTDIR}${PREFIX}/lib/librwm.so
+	install -Dm0644 inc/rwm.h ${DESTDIR}${PREFIX}/usr/include/rwm.h
 	mkdir -p ${DESTDIR}${MANPREFIX}/man1
 	sed "s/VERSION/${VERSION}/g" < dwm.1 > ${DESTDIR}${MANPREFIX}/man1/dwm.1
 	chmod 644 ${DESTDIR}${MANPREFIX}/man1/dwm.1
@@ -57,5 +61,7 @@ install: all
 uninstall:
 	rm -f ${DESTDIR}${PREFIX}/bin/dwm\
 		${DESTDIR}${MANPREFIX}/man1/dwm.1
+		${DESTDIR}${MANPREFIX}/lib/librwm.so
+		${DESTDIR}${MANPREFIX}/usr/include/rwm.h
 
 .PHONY: all options clean dist install uninstall

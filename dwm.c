@@ -41,7 +41,7 @@
 #endif /* XINERAMA */
 #include <X11/Xft/Xft.h>
 
-#include <libdwm.h>
+#include <rwm.h>
 
 #include "drw.h"
 #include "util.h"

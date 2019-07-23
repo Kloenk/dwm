@@ -11,8 +11,8 @@ X11INC = /usr/X11R6/include
 X11LIB = /usr/X11R6/lib
 
 # libdwm.a (rust) files
-LIBDWMINC = libdwm/out/
-LIBDWMLIB = lib/
+LIBRWMINC = inc/
+LIBRWMLIB = lib/
 
 # Xinerama, comment if you don't want it
 XINERAMALIBS  = -lXinerama
@@ -25,8 +25,8 @@ FREETYPEINC = /usr/include/freetype2
 #FREETYPEINC = ${X11INC}/freetype2
 
 # includes and libs
-INCS = -I${X11INC} -I${FREETYPEINC} -I${LIBDWMINC}
-LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} ${FREETYPELIBS} -L${LIBDWMLIB} -ldwm -ldl -lpthread
+INCS = -I${X11INC} -I${FREETYPEINC} -I${LIBRWMINC}
+LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} ${FREETYPELIBS} -L${LIBRWMLIB} -lrwm -ldl -lpthread
 
 # flags
 CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=2 -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
