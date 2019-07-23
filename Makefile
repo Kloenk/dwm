@@ -17,16 +17,26 @@ options:
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-${OBJ}: config.h config.mk
+${OBJ}: config.h config.mk libdwm/out/libdwm.h
 
 #config.h: config.def.h
 #	cp config.def.h $@
 
-dwm: ${OBJ}
+lib/libdwm.so: libdwm/src/*.rs
+	$(MAKE) -C libdwm out//libdwm.so
+	mkdir -p lib/
+	cp libdwm/out/libdwm.so lib/libdwm.so
+
+libdwm/out/libdwm.h:
+	$(MAKE) -C libdwm out//libdwm.h
+
+dwm: ${OBJ} lib/libdwm.so
 	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
 clean:
-	rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
+	-rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
+	-rm -rf lib/
+	$(MAKE) -C libdwm clean
 
 dist: clean
 	mkdir -p dwm-${VERSION}

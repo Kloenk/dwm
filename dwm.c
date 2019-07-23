@@ -41,6 +41,8 @@
 #endif /* XINERAMA */
 #include <X11/Xft/Xft.h>
 
+#include <libdwm.h>
+
 #include "drw.h"
 #include "util.h"
 
@@ -237,6 +239,7 @@ static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
+static void intHandler(int dummy);
 
 /* variables */
 static const char broken[] = "broken";
@@ -1419,9 +1422,13 @@ run(void)
 	XEvent ev;
 	/* main event loop */
 	XSync(dpy, False);
-	while (running && !XNextEvent(dpy, &ev))
-		if (handler[ev.type])
+	while (running && !XNextEvent(dpy, &ev)) {
+		if (handler[ev.type]) {
+			if (run_rwm() != 0 ) 
+				printf("error running run_rwm()");
 			handler[ev.type](&ev); /* call handler */
+		}
+	}
 }
 
 void
@@ -2175,6 +2182,13 @@ zoom(const Arg *arg)
 	pop(c);
 }
 
+void intHandler(int dummy) {
+	printf("handler called");
+	running = 0;
+}
+
+#include <stdio.h>
+
 int
 main(int argc, char *argv[])
 {
@@ -2186,8 +2200,17 @@ main(int argc, char *argv[])
 		fputs("warning: no locale support\n", stderr);
 	if (!(dpy = XOpenDisplay(NULL)))
 		die("dwm: cannot open display");
+
+	if (signal(SIGINT, intHandler) == SIG_ERR)
+		die("unable to add signal catcher for INT");
+	if (signal(SIGTERM, intHandler) == SIG_ERR)
+		die("unable to add signal catcher for TERM");
+
 	checkotherwm();
 	setup();
+	if (init_rwm(soketaddr, commands, sizeof(commands)/sizeof(Command_r)) != 0) {
+		die("error init rwm");
+	}
 #ifdef __OpenBSD__
 	if (pledge("stdio rpath proc exec", NULL) == -1)
 		die("pledge");
@@ -2195,6 +2218,7 @@ main(int argc, char *argv[])
 	scan();
 	run();
 	cleanup();
+	int rwm_status = quit_rwm();
 	XCloseDisplay(dpy);
-	return EXIT_SUCCESS;
+	return rwm_status;
 }

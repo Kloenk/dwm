@@ -142,3 +142,38 @@ static Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
+
+#define TAGCMD(BASE,TAG) \
+	{ BASE,					view, 			{.ui = 1 << TAG} }, \
+	{ "toggle-" BASE,		toggleview, 	{.ui = 1 << TAG} }, \
+	{ "tag-" BASE,		tag,			{.ui = 1 << TAG} }, \
+	{ "multi-" BASE, 		toggletag,		{.ui = 1 << TAG} }
+
+/* socket */
+static const char *soketaddr = "$XDG_RUNTIME_DIR/dwm/dwm.socket";
+static Command_r commands[] = {
+	/* name					function				argument */
+	{ "menu",				spawn,					{.v = roficmd} },
+	{ "rofi", 				spawn, 					{.v = roficmd} },
+	{ "rofipass",			spawn,					{.v = rofi_passcmd} },
+	{ "term",				spawn,					{.v = termcmd} },
+	{ "restart compton",	spawn,					{.v = compton_restartcmd} },
+	{ "quit",       	    quit,			        {0} },
+	{ "toggletag",			togglealttag,   		{0} },
+	{ "togglebar",			togglebar,				{0} },
+	{ "zoom",				zoom,					{0} },
+	{ "last",				view,					{.ui = ~0 } },
+	{ "prev monitor",		focusmon,				{.i = -1} },
+	{ "next monitor",		focusmon,				{.i = +1} },
+	TAGCMD(					"1",					0),
+	TAGCMD(					"2",					1),
+	TAGCMD(					"3",					2),
+	TAGCMD(					"4",					3),
+	TAGCMD(					"5",					4),
+	TAGCMD(					"6",					5),
+	TAGCMD(					"7",					6),
+	TAGCMD(					"8",					7),
+	TAGCMD(					"9",					8),
+	{ "cycle",				cyclelayout,  		    {.i = +1} },
+};
+
