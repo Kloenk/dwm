@@ -1,3 +1,6 @@
 *.o
 dwm
 lib/
+
+# nix output
+result*
