@@ -44,6 +44,7 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
 
 #include "fibonacci.c"
 #include "tcl.c"
+#include "maximize.c"
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -124,6 +125,11 @@ static Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_r,      self_restart,   {0} },
 	{ MODKEY|ShiftMask,             XK_e,      quit,           {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_h,           togglehorizontalmax, NULL },
+	{ MODKEY|ControlMask|ShiftMask, XK_l,           togglehorizontalmax, NULL },
+	{ MODKEY|ControlMask|ShiftMask, XK_j,           toggleverticalmax,   NULL },
+	{ MODKEY|ControlMask|ShiftMask, XK_k,           toggleverticalmax,   NULL },
+	{ MODKEY|ControlMask,           XK_m,           togglemaximize,      {0} },
 };
 
 /* button definitions */
