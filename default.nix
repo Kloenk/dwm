@@ -18,8 +18,8 @@ let
     # Find the line in "xrandr -q --verbose" output that contains current screen orientation and "strip" out current orientation.
     rotation="$(${xrandr}/bin/xrandr -q --verbose | grep 'connected' | egrep -o  '\) (normal|left|inverted|right) \(' | egrep -o '(normal|left|inverted|right)')"
     
-    stylus="16"
-    eraser="22"
+    stylus="Wacom ISDv4 90 Pen stylus"
+    eraser="Wacom ISDv4 90 Pen eraser"
     
     # Using current screen orientation proceed to rotate screen and input tools.
     case "$rotation" in
