@@ -76,6 +76,7 @@ static const char *roficmd[] = { "rofi", "-show", "combi" };
 static const char *rofi_passcmd[] = { "rofi-pass", NULL };
 static const char *compton_restartcmd[] = { "systemctl", "--user", "restart", "compton.service" };
 static const char *termcmd[]  = { "termite", NULL };
+static const char *rotatecmd[] = { "rotate.sh", NULL};
 
 #include "movestack.c"
 #include "selfrestart.c"
@@ -83,7 +84,8 @@ static const char *termcmd[]  = { "termite", NULL };
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_d,      spawn,          {.v = roficmd } },
-	{ MODKEY,                       XK_p,      spawn,           {.v = rofi_passcmd } },
+	{ MODKEY,                       XK_p,      spawn,          {.v = rofi_passcmd } },
+	{ false,			0x1008ff74,spawn,	   {.v = rotatecmd } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,             XK_c,      spawn,          {.v = compton_restartcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
