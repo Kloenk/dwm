@@ -10,6 +10,8 @@
   , ...
 }:
 
+# TODO add runtime dependencies (rofi, rofi-pass, termite, ...)
+
 with pkgs;
 let 
   rotate_sh = writeScript "rotate.sh" ''
@@ -25,11 +27,23 @@ let
     case "$rotation" in
         normal)
         # rotate to the left
+        ${xrandr}/bin/xrandr -o left
+        ${xf86_input_wacom}/bin/xsetwacom set "$stylus" rotate ccw
+        ${xf86_input_wacom}/bin/xsetwacom set "$eraser" rotate ccw
+        ;;
+        left)
+        # rotate to inverted
         ${xrandr}/bin/xrandr -o inverted
         ${xf86_input_wacom}/bin/xsetwacom set "$stylus" rotate half
         ${xf86_input_wacom}/bin/xsetwacom set "$eraser" rotate half
         ;;
         inverted)
+        # rotate to right
+        ${xrandr}/bin/xrandr -o right
+        ${xf86_input_wacom}/bin/xsetwacom set "$stylus" rotate cw
+        ${xf86_input_wacom}/bin/xsetwacom set "$eraser" rotate cw
+        ;;
+        *)
         # rotate to normal
         ${xrandr}/bin/xrandr -o normal
         ${xf86_input_wacom}/bin/xsetwacom set "$stylus" rotate none
