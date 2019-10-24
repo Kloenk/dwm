@@ -7,6 +7,7 @@
   ,rwm ? pkgs.callPackage ./rwm/default.nix { }
   ,xrandr ? pkgs.xorg.xrandr
   ,xf86_input_wacom ? pkgs.xf86_input_wacom
+  ,terminal ? "${pkgs.termite}/bin/termite"
   , ...
 }:
 
@@ -62,6 +63,7 @@ stdenv.mkDerivation {
     sed -i "s@inc/@${rwm}/usr/include@" config.mk
     sed -i "s@lib/@${rwm}/lib@" config.mk
     sed -i "s@rotate.sh@${rotate_sh}@" config.h
+    sed -i "s@termite@${terminal}@" config.h
   ''; # TODO rwm?
 
   buildPhase = " make ";
