@@ -7,6 +7,7 @@
   ,rwm ? pkgs.callPackage ./rwm/default.nix { }
   ,xrandr ? pkgs.xorg.xrandr
   ,xf86_input_wacom ? pkgs.xf86_input_wacom
+  ,stdenv ? pkgs.stdenv
   ,terminal ? "${pkgs.termite}/bin/termite"
   , ...
 }:
